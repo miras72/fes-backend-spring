@@ -1,4 +1,4 @@
-package pl.tycm.fes.service.controller;
+package pl.tycm.fes.controller.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

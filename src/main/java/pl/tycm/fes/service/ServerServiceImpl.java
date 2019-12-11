@@ -31,11 +31,11 @@ import jcifs.smb.SmbException;
 import jcifs.smb.SmbFile;
 import jcifs.smb.SmbFileOutputStream;
 import pl.tycm.fes.LogStatus;
+import pl.tycm.fes.controller.service.EventService;
 import pl.tycm.fes.model.Event;
 import pl.tycm.fes.model.FileExchangeStatus;
 import pl.tycm.fes.model.Server;
 import pl.tycm.fes.model.Report;
-import pl.tycm.fes.service.controller.EventService;
 import pl.tycm.fes.util.MTTools;
 
 @Service

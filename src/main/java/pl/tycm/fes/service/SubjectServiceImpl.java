@@ -8,6 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import pl.tycm.fes.LogStatus;
+import pl.tycm.fes.controller.service.DecryptionKeyService;
+import pl.tycm.fes.controller.service.EncryptionKeyService;
+import pl.tycm.fes.controller.service.EventService;
+import pl.tycm.fes.controller.service.ServerConfigService;
 import pl.tycm.fes.exception.DecryptionKeyNotFoundException;
 import pl.tycm.fes.exception.EncryptionKeyNotFoundException;
 import pl.tycm.fes.exception.ServerConfigNotFoundException;
@@ -18,10 +22,6 @@ import pl.tycm.fes.model.PrivateKeyDTO;
 import pl.tycm.fes.model.Report;
 import pl.tycm.fes.model.ServerConfig;
 import pl.tycm.fes.model.TaskConfig;
-import pl.tycm.fes.service.controller.DecryptionKeyService;
-import pl.tycm.fes.service.controller.EncryptionKeyService;
-import pl.tycm.fes.service.controller.EventService;
-import pl.tycm.fes.service.controller.ServerConfigService;
 import pl.tycm.fes.util.MTTools;
 
 @Service

@@ -16,6 +16,11 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 
 import pl.tycm.fes.LogStatus;
+import pl.tycm.fes.controller.service.EventService;
+import pl.tycm.fes.controller.service.FileExchangeStatusService;
+import pl.tycm.fes.controller.service.ServerConfigService;
+import pl.tycm.fes.controller.service.TaskConfigService;
+import pl.tycm.fes.controller.service.TaskStatusService;
 import pl.tycm.fes.exception.ServerConfigNotFoundException;
 import pl.tycm.fes.model.Event;
 import pl.tycm.fes.model.FileExchangeStatus;
@@ -24,11 +29,6 @@ import pl.tycm.fes.model.Report;
 import pl.tycm.fes.model.ServerConfig;
 import pl.tycm.fes.model.TaskConfig;
 import pl.tycm.fes.model.TaskStatus;
-import pl.tycm.fes.service.controller.EventService;
-import pl.tycm.fes.service.controller.FileExchangeStatusService;
-import pl.tycm.fes.service.controller.ServerConfigService;
-import pl.tycm.fes.service.controller.TaskConfigService;
-import pl.tycm.fes.service.controller.TaskStatusService;
 import pl.tycm.fes.util.MTTools;
 
 public class AppService {

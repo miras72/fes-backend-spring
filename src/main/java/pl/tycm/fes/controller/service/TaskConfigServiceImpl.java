@@ -1,4 +1,4 @@
-package pl.tycm.fes.service.controller;
+package pl.tycm.fes.controller.service;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

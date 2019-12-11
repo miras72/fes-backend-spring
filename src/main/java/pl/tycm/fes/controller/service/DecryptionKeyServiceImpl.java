@@ -1,4 +1,4 @@
-package pl.tycm.fes.service.controller;
+package pl.tycm.fes.controller.service;
 
 import java.io.IOException;
 import java.util.List;

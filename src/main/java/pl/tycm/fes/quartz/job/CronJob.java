@@ -15,11 +15,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
+import pl.tycm.fes.controller.service.TaskStatusService;
 import pl.tycm.fes.exception.TaskStatusNotFoundException;
 import pl.tycm.fes.model.TaskStatus;
 import pl.tycm.fes.quartz.service.JobService;
 import pl.tycm.fes.service.AppService;
-import pl.tycm.fes.service.controller.TaskStatusService;
 
 public class CronJob extends QuartzJobBean implements InterruptableJob {
 

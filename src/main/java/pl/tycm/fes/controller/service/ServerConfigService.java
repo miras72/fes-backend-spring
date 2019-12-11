@@ -1,4 +1,4 @@
-package pl.tycm.fes.service.controller;
+package pl.tycm.fes.controller.service;
 
 import pl.tycm.fes.exception.ServerConfigNotFoundException;
 import pl.tycm.fes.model.ServerConfig;
