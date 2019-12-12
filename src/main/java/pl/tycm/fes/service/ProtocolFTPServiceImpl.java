@@ -20,7 +20,6 @@ import org.apache.commons.net.ftp.FTPConnectionClosedException;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPFileFilter;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import pl.tycm.fes.LogStatus;
@@ -38,11 +37,14 @@ public class ProtocolFTPServiceImpl implements ProtocolFTPService {
 	private final Logger logger = Logger.getLogger(this.getClass());
 	private final int port = 21;
 
-	@Autowired
-	private EventService eventService;
+	private final EventService eventService;
 
-	@Autowired
-	private ReportService reportService;
+	private final ReportService reportService;
+
+	public ProtocolFTPServiceImpl(EventService eventService, ReportService reportService) {
+		this.eventService = eventService;
+		this.reportService = reportService;
+	}
 
 	@Override
 	public List<String> receiveFiles(TaskConfig taskConfig, String workingDirectory,

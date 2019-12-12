@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,17 +21,20 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import pl.tycm.fes.controller.service.DecryptionKeyService;
 import pl.tycm.fes.exception.DecryptionKeyNotFoundException;
 import pl.tycm.fes.model.DecryptionKey;
 import pl.tycm.fes.model.DecryptionKeyDTO;
-import pl.tycm.fes.service.controller.DecryptionKeyService;
 
 @RestController
 @RequestMapping("/api")
 public class DecryptionKeyController {
 
-	@Autowired
-	private DecryptionKeyService decryptionKeyService;
+	private final DecryptionKeyService decryptionKeyService;
+	
+	public DecryptionKeyController(DecryptionKeyService decryptionKeyService) {
+		this.decryptionKeyService = decryptionKeyService;
+	}
 
 	@GetMapping("/decryption-keys")
 	@ResponseStatus(HttpStatus.OK)

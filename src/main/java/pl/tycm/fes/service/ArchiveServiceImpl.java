@@ -14,7 +14,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import pl.tycm.fes.LogStatus;
@@ -29,12 +28,15 @@ public class ArchiveServiceImpl implements ArchiveService {
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 	
-	@Autowired
-	private EventService eventService;
+	private final EventService eventService;
 
-	@Autowired
-	private ReportService reportService;
+	private final ReportService reportService;
 	
+	public ArchiveServiceImpl(EventService eventService, ReportService reportService) {
+		this.eventService = eventService;
+		this.reportService = reportService;
+	}
+
 	@Override
 	public boolean archiveFiles(String workingDirectory, String archiveDirectory, List<String> receiveFileList,
 			FileExchangeStatus fileExchangeStatus, Report report) {

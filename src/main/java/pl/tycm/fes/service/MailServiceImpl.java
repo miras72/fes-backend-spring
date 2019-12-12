@@ -6,7 +6,6 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -18,8 +17,11 @@ public class MailServiceImpl implements MailService {
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 
-	@Autowired
-	private JavaMailSender javaMailSender;
+	private final JavaMailSender javaMailSender;
+
+	public MailServiceImpl(JavaMailSender javaMailSender) {
+		this.javaMailSender = javaMailSender;
+	}
 
 	@Override
 	public void sendMail(String mailSubject, String mailFrom, List<MailingList> mailingList, String raportMessage) throws MessagingException {

@@ -1,6 +1,5 @@
 package pl.tycm.fes.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,8 +16,11 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	@Value("${security.jwt.resource-ids}")
 	private String resourceIds;
 
-	@Autowired
-	private ResourceServerTokenServices tokenServices;
+	private final ResourceServerTokenServices tokenServices;
+
+	public ResourceServerConfig(ResourceServerTokenServices tokenServices) {
+		this.tokenServices = tokenServices;
+	}
 
 	@Override
 	public void configure(ResourceServerSecurityConfigurer resources) throws Exception {

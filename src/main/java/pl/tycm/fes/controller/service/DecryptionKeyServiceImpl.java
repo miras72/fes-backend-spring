@@ -3,7 +3,6 @@ package pl.tycm.fes.controller.service;
 import java.io.IOException;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,8 +14,11 @@ import pl.tycm.fes.model.DecryptionKeyDTO;
 @Service
 public class DecryptionKeyServiceImpl implements DecryptionKeyService {
 
-	@Autowired
-	private DecryptionKeyDAO decryptionKeyDAO;
+	private final DecryptionKeyDAO decryptionKeyDAO;
+
+	public DecryptionKeyServiceImpl(DecryptionKeyDAO decryptionKeyDAO) {
+		this.decryptionKeyDAO = decryptionKeyDAO;
+	}
 
 	@Override
 	public DecryptionKey getDecryptionKey(long id) throws DecryptionKeyNotFoundException {

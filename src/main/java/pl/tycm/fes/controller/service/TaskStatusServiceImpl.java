@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
@@ -16,9 +15,12 @@ import pl.tycm.fes.repository.TaskStatusRepository;
 @Service
 public class TaskStatusServiceImpl implements TaskStatusService{
 
-	@Autowired
-	private TaskStatusRepository taskStatusRepository;
+	private final TaskStatusRepository taskStatusRepository;
 	//private TaskStatusDAO taskStatusDAO;
+	
+	public TaskStatusServiceImpl(TaskStatusRepository taskStatusRepository) {
+		this.taskStatusRepository = taskStatusRepository;
+	}
 	
 	@Override
 	public TaskStatus getTaskStatus(Long taskConfigId) throws TaskStatusNotFoundException {

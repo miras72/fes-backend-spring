@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,18 +21,21 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import pl.tycm.fes.controller.service.EncryptionKeyService;
 import pl.tycm.fes.exception.EncryptionKeyNotFoundException;
 import pl.tycm.fes.model.EncryptionKeyDTO;
 import pl.tycm.fes.model.PrivateKeyDTO;
 import pl.tycm.fes.model.PublicKeyDTO;
-import pl.tycm.fes.service.controller.EncryptionKeyService;
 
 @RestController
 @RequestMapping("/api")
 public class EncryptionKeyController {
 
-	@Autowired
-	private EncryptionKeyService encryptionKeyService;
+	private final EncryptionKeyService encryptionKeyService;
+
+	public EncryptionKeyController(EncryptionKeyService encryptionKeyService) {
+		this.encryptionKeyService = encryptionKeyService;
+	}
 
 	@GetMapping("/encryption-keys")
 	@ResponseStatus(HttpStatus.OK)

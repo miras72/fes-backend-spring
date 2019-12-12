@@ -1,7 +1,6 @@
 package pl.tycm.fes.controller.service;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import pl.tycm.fes.model.FileList;
@@ -11,9 +10,12 @@ import pl.tycm.fes.service.AppService;
 @Service
 public class ManualFileExchangeServiceImpl implements ManualFileExchangeService {
 	
-	@Autowired
-	private AppService appBean;
+	private final AppService appBean;
 	
+	public ManualFileExchangeServiceImpl(AppService appBean) {
+		this.appBean = appBean;
+	}
+
 	@Override
 	public void startManualFileExchange(ManualFileExchange manualFileExchange) {
 		

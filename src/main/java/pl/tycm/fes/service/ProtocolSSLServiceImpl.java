@@ -24,7 +24,6 @@ import javax.net.ssl.HttpsURLConnection;
 
 import org.apache.commons.net.util.Base64;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import pl.tycm.fes.LogStatus;
@@ -43,11 +42,14 @@ public class ProtocolSSLServiceImpl implements ProtocolSSLService {
 
 	private static final String ERROR_DIRECTORY = "html";
 
-	@Autowired
-	private EventService eventService;
+	private final EventService eventService;
 
-	@Autowired
-	private ReportService reportService;
+	private final ReportService reportService;
+
+	public ProtocolSSLServiceImpl(EventService eventService, ReportService reportService) {
+		this.eventService = eventService;
+		this.reportService = reportService;
+	}
 
 	@Override
 	public List<String> receiveFiles(TaskConfig taskConfig, String workingDirectory,

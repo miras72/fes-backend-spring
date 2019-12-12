@@ -3,7 +3,6 @@ package pl.tycm.fes.controller.service;
 import java.io.IOException;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,8 +16,11 @@ import pl.tycm.fes.model.PublicKeyDTO;
 @Service
 public class EncryptionKeyServiceImpl implements EncryptionKeyService {
 
-	@Autowired
-	private EncryptionKeyDAO encryptionKeyDAO;
+	private final EncryptionKeyDAO encryptionKeyDAO;
+
+	public EncryptionKeyServiceImpl(EncryptionKeyDAO encryptionKeyDAO) {
+		this.encryptionKeyDAO = encryptionKeyDAO;
+	}
 
 	@Override
 	public List<EncryptionKeyDTO> getAllEncryptionKeyName() {

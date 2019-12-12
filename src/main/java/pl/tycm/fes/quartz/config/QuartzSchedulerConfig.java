@@ -2,7 +2,6 @@ package pl.tycm.fes.quartz.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,14 +18,19 @@ public class QuartzSchedulerConfig {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
 
-	@Autowired
-	private ApplicationContext applicationContext;
 	
-	@Autowired
-    private TriggerListner triggerListner;
+	private final ApplicationContext applicationContext;
+	
+    private final TriggerListner triggerListner;
 
-    @Autowired
-    private JobsListener jobsListener;
+    private final JobsListener jobsListener;
+
+	public QuartzSchedulerConfig(ApplicationContext applicationContext, TriggerListner triggerListner,
+			JobsListener jobsListener) {
+		this.applicationContext = applicationContext;
+		this.triggerListner = triggerListner;
+		this.jobsListener = jobsListener;
+	}
 
 	@Bean
 	public SpringBeanJobFactory springBeanJobFactory() {

@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -20,13 +19,16 @@ import pl.tycm.fes.util.MTTools;
 public class AppStartupRunner implements ApplicationRunner {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass().getSimpleName());
-
-	@Autowired
-	JobService jobService;
-
-	@Autowired
-	TaskConfigDAO taskConfigDAO;
 	
+	private final TaskConfigDAO taskConfigDAO;
+	private final JobService jobService;
+	
+	public AppStartupRunner(TaskConfigDAO taskConfigDAO, JobService jobService) {
+		this.taskConfigDAO = taskConfigDAO;
+		this.jobService = jobService;
+	}
+
+
 	@Override
 	public void run(ApplicationArguments arg0) throws Exception {
 		

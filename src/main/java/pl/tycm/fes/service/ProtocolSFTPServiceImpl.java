@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sshtools.net.SocketTransport;
@@ -46,14 +45,18 @@ public class ProtocolSFTPServiceImpl implements ProtocolSFTPService {
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 
-	@Autowired
-	private EventService eventService;
+	private final EventService eventService;
 
-	@Autowired
-	private ReportService reportService;
+	private final ReportService reportService;
 
-	@Autowired
-	private LocalFileListService localFileListService;
+	private final LocalFileListService localFileListService;
+
+	public ProtocolSFTPServiceImpl(EventService eventService, ReportService reportService,
+			LocalFileListService localFileListService) {
+		this.eventService = eventService;
+		this.reportService = reportService;
+		this.localFileListService = localFileListService;
+	}
 
 	@Override
 	public List<String> receiveFiles(TaskConfig taskConfig, String workingDirectory, String privateKeyName,

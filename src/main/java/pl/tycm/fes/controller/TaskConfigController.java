@@ -2,7 +2,6 @@ package pl.tycm.fes.controller;
 
 import java.net.URI;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,17 +19,20 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
+import pl.tycm.fes.controller.service.TaskConfigService;
 import pl.tycm.fes.exception.TaskConfigNotFoundException;
 import pl.tycm.fes.model.TaskConfig;
 import pl.tycm.fes.model.View;
-import pl.tycm.fes.service.controller.TaskConfigService;
 
 @RestController
 @RequestMapping("/api")
 public class TaskConfigController {
 
-	@Autowired
-	private TaskConfigService taskConfigService;
+	private final TaskConfigService taskConfigService;
+	
+	public TaskConfigController(TaskConfigService taskConfigService) {
+		this.taskConfigService = taskConfigService;
+	}
 
 	@JsonView(View.TaskConfigView.class)
 	@GetMapping("/tasks/{id}")

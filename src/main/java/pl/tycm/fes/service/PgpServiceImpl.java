@@ -30,7 +30,6 @@ import org.bouncycastle.openpgp.jcajce.JcaPGPObjectFactory;
 import org.bouncycastle.openpgp.operator.bc.BcPublicKeyDataDecryptorFactory;
 import org.bouncycastle.openpgp.operator.jcajce.JcaKeyFingerprintCalculator;
 import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import pl.tycm.fes.LogStatus;
@@ -45,11 +44,14 @@ public class PgpServiceImpl implements PgpService {
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 
-	@Autowired
-	private EventService eventService;
+	private final EventService eventService;
 
-	@Autowired
-	private ReportService reportService;
+	private final ReportService reportService;
+
+	public PgpServiceImpl(EventService eventService, ReportService reportService) {
+		this.eventService = eventService;
+		this.reportService = reportService;
+	}
 
 	@Override
 	public List<String> decryptPGPFile(String workingDirectory, byte[] decryptionKey, List<String> receiveFileList,

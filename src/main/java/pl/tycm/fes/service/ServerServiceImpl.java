@@ -10,7 +10,6 @@ import java.util.EnumSet;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hierynomus.msdtyp.AccessMask;
@@ -43,11 +42,15 @@ public class ServerServiceImpl implements ServerService {
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 
-	@Autowired
-	private EventService eventService;
+	
+	private final EventService eventService;
 
-	@Autowired
-	private ReportService reportService;
+	private final ReportService reportService;
+
+	public ServerServiceImpl(EventService eventService, ReportService reportService) {
+		this.eventService = eventService;
+		this.reportService = reportService;
+	}
 
 	@Override
 	public boolean sendFiles(List<Server> servers, String workingDirectory, List<String> receiveFileList,

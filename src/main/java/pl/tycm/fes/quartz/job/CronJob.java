@@ -12,13 +12,11 @@ import org.quartz.JobKey;
 import org.quartz.UnableToInterruptJobException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import pl.tycm.fes.controller.service.TaskStatusService;
 import pl.tycm.fes.exception.TaskStatusNotFoundException;
 import pl.tycm.fes.model.TaskStatus;
-import pl.tycm.fes.quartz.service.JobService;
 import pl.tycm.fes.service.AppService;
 
 public class CronJob extends QuartzJobBean implements InterruptableJob {
@@ -29,14 +27,15 @@ public class CronJob extends QuartzJobBean implements InterruptableJob {
 
 	//private volatile boolean toStopFlag = true;
 
-	@Autowired
-	JobService jobService;
+	private final AppService appService;
 
-	@Autowired
-	private AppService appService;
+	private final TaskStatusService taskStatusService;
 
-	@Autowired
-	private TaskStatusService taskStatusService;
+
+	public CronJob(AppService appService, TaskStatusService taskStatusService) {
+		this.appService = appService;
+		this.taskStatusService = taskStatusService;
+	}
 
 	@Override
 	protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {

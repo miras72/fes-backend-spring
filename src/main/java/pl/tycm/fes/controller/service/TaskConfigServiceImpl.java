@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import pl.tycm.fes.dao.TaskConfigDAO;
@@ -27,14 +26,18 @@ public class TaskConfigServiceImpl implements TaskConfigService {
 
 	DateFormat nextScheduledDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
-	@Autowired
-	private TaskConfigDAO taskConfigDAO;
+	private final TaskConfigDAO taskConfigDAO;
 
-	@Autowired
-	JobService jobService;
+	private final JobService jobService;
 
-	@Autowired
-	private TaskStatusService taskStatusService;
+	private final TaskStatusService taskStatusService;
+	
+	public TaskConfigServiceImpl(TaskConfigDAO taskConfigDAO, JobService jobService,
+			TaskStatusService taskStatusService) {
+		this.taskConfigDAO = taskConfigDAO;
+		this.jobService = jobService;
+		this.taskStatusService = taskStatusService;
+	}
 
 	@Override
 	public TaskConfig getTaskConfig(long id) throws TaskConfigNotFoundException {
