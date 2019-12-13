@@ -32,7 +32,6 @@ import com.sshtools.ssh2.Ssh2Client;
 
 import pl.tycm.fes.LogStatus;
 import pl.tycm.fes.controller.service.EventService;
-import pl.tycm.fes.model.Event;
 import pl.tycm.fes.model.FileExchangeStatus;
 import pl.tycm.fes.model.FileList;
 import pl.tycm.fes.model.LocalFileList;
@@ -79,8 +78,8 @@ public class ProtocolSFTPServiceImpl implements ProtocolSFTPService {
 
 		if (ssh2 != null) {
 			logger.info("Pobieram pliki z serwera Podmiotu (" + subjectAddress + "):");
-			eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
-					+ "Pobieram pliki z serwera Podmiotu (" + subjectAddress + "):"));
+			eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
+					+ "Pobieram pliki z serwera Podmiotu (" + subjectAddress + "):");
 			reportService.addMessage(report, "- Lista plików pobranych z serwera Podmiotu (" + subjectAddress + "):");
 
 			try {
@@ -108,8 +107,8 @@ public class ProtocolSFTPServiceImpl implements ProtocolSFTPService {
 
 					public void completed() {
 						logger.info("Plik pobrany.");
-						eventService.createEvent(new Event(fileExchangeStatus,
-								MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik pobrany."));
+						eventService.createEvent(fileExchangeStatus,
+								MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik pobrany.");
 						receiveFileList.add(remoteFileName);
 						reportService.addMessage(report, remoteFileName);
 
@@ -119,27 +118,27 @@ public class ProtocolSFTPServiceImpl implements ProtocolSFTPService {
 								try {
 									logger.info("Zmieniam na serwerze nazwę pliku z: " + remoteFileName + " na "
 											+ remoteFileName + ".downloaded" + "...");
-									eventService.createEvent(new Event(fileExchangeStatus,
+									eventService.createEvent(fileExchangeStatus,
 											MTTools.getLogDate() + LogStatus.INFO.getDesc()
 													+ "Zmieniam na serwerze nazwę pliku z: " + remoteFileName + " na "
-													+ remoteFileName + ".downloaded" + "..."));
+													+ remoteFileName + ".downloaded" + "...");
 
 									sftp.rename(remoteFileName, remoteFileName + ".downloaded");
 									logger.info("Nazwa została zmieniona.");
-									eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate()
-											+ LogStatus.INFO.getDesc() + "Nazwa została zmieniona."));
+									eventService.createEvent(fileExchangeStatus, MTTools.getLogDate()
+											+ LogStatus.INFO.getDesc() + "Nazwa została zmieniona.");
 								} catch (SftpStatusException e) {
 									logger.error("Błąd zmiany nazwy plików: " + e.getMessage());
-									eventService.createEvent(new Event(fileExchangeStatus,
+									eventService.createEvent(fileExchangeStatus,
 											MTTools.getLogDate() + LogStatus.ERROR.getDesc()
-													+ "Błąd zmiany nazwy plików: " + e.getMessage()));
+													+ "Błąd zmiany nazwy plików: " + e.getMessage());
 									reportService.addMessage(report, "-> Błąd zmiany nazwy pliku: " + remoteFileName);
 									logger.error("StackTrace: ", e);
 								} catch (SshException e) {
 									logger.error("Błąd zmiany nazwy plików: " + e.getMessage());
-									eventService.createEvent(new Event(fileExchangeStatus,
+									eventService.createEvent(fileExchangeStatus,
 											MTTools.getLogDate() + LogStatus.ERROR.getDesc()
-													+ "Błąd zmiany nazwy plików: " + e.getMessage()));
+													+ "Błąd zmiany nazwy plików: " + e.getMessage());
 									reportService.addMessage(report, "-> Błąd zmiany nazwy pliku: " + remoteFileName);
 									logger.error("StackTrace: ", e);
 								}
@@ -147,38 +146,37 @@ public class ProtocolSFTPServiceImpl implements ProtocolSFTPService {
 							case "delete":
 								try {
 									logger.info("Kasuję na serwerze plik: " + remoteFileName + "...");
-									eventService.createEvent(new Event(fileExchangeStatus,
+									eventService.createEvent(fileExchangeStatus,
 											MTTools.getLogDate() + LogStatus.INFO.getDesc()
-													+ "Kasuję na serwerze plik: " + remoteFileName + "..."));
+													+ "Kasuję na serwerze plik: " + remoteFileName + "...");
 									sftp.rm(remoteFileName);
 									logger.info("Plik skasowany.");
-									eventService.createEvent(new Event(fileExchangeStatus,
-											MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik skasowany."));
+									eventService.createEvent(fileExchangeStatus,
+											MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik skasowany.");
 								} catch (SftpStatusException e) {
 									logger.error("Błąd kasowania plików: " + e.getMessage());
-									eventService.createEvent(new Event(fileExchangeStatus,
+									eventService.createEvent(fileExchangeStatus,
 											MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "ERROR "
-													+ "Błąd kasowania plików: " + e.getMessage()));
+													+ "Błąd kasowania plików: " + e.getMessage());
 									reportService.addMessage(report, "-> Błąd kasowania pliku: " + remoteFileName);
 									logger.error("StackTrace: ", e);
 								} catch (SshException e) {
 									logger.error("Błąd kasowania plików: " + e.getMessage());
-									eventService.createEvent(new Event(fileExchangeStatus,
+									eventService.createEvent(fileExchangeStatus,
 											MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "ERROR "
-													+ "Błąd kasowania plików: " + e.getMessage()));
+													+ "Błąd kasowania plików: " + e.getMessage());
 									reportService.addMessage(report, "-> Błąd kasowania pliku: " + remoteFileName);
 									logger.error("StackTrace: ", e);
 								}
 								break;
 							case "sync":
 								logger.info("Synchronizuje z serwerem plik: " + remoteFileName + "...");
-								eventService.createEvent(
-										new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
-												+ "Synchronizuje z serwerem plik: " + remoteFileName + "..."));
+								eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
+												+ "Synchronizuje z serwerem plik: " + remoteFileName + "...");
 								localFileListService.createLocalFileList(new LocalFileList(taskConfig, remoteFileName));
 								logger.info("Plik zsynchronizowany.");
-								eventService.createEvent(new Event(fileExchangeStatus,
-										MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik zsynchronizowany."));
+								eventService.createEvent(fileExchangeStatus,
+										MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik zsynchronizowany.");
 								break;
 							}
 						}
@@ -200,8 +198,8 @@ public class ProtocolSFTPServiceImpl implements ProtocolSFTPService {
 					public void started(long arg0, String arg1) {
 						remoteFileName = arg1.substring(arg1.lastIndexOf("/") + 1);
 						logger.info("Pobieram plik: " + remoteFileName + "...");
-						eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate()
-								+ LogStatus.INFO.getDesc() + "Pobieram plik: " + remoteFileName + "..."));
+						eventService.createEvent(fileExchangeStatus, MTTools.getLogDate()
+								+ LogStatus.INFO.getDesc() + "Pobieram plik: " + remoteFileName + "...");
 					}
 				};
 
@@ -227,8 +225,8 @@ public class ProtocolSFTPServiceImpl implements ProtocolSFTPService {
 								sftp.get(file, progress);
 							} catch (FileNotFoundException th) {
 								logger.fatal("Plik nie istnieje: " + th.getMessage());
-								eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate()
-										+ LogStatus.FATAL.getDesc() + "Plik nie istnieje: " + th.getMessage()));
+								eventService.createEvent(fileExchangeStatus, MTTools.getLogDate()
+										+ LogStatus.FATAL.getDesc() + "Plik nie istnieje: " + th.getMessage());
 							}
 						}
 					}
@@ -238,31 +236,31 @@ public class ProtocolSFTPServiceImpl implements ProtocolSFTPService {
 							sftp.getFiles(fileName, progress);
 						} catch (FileNotFoundException th) {
 							logger.fatal("Plik nie istnieje: " + th.getMessage());
-							eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate()
-									+ LogStatus.FATAL.getDesc() + "Plik nie istnieje: " + th.getMessage()));
+							eventService.createEvent(fileExchangeStatus, MTTools.getLogDate()
+									+ LogStatus.FATAL.getDesc() + "Plik nie istnieje: " + th.getMessage());
 						}
 					}
 				}
 			} catch (SftpStatusException th) {
 				logger.fatal("Błąd pobierania plików: " + th.getMessage());
-				eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc()
-						+ "Błąd pobierania plików: " + th.getMessage()));
+				eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc()
+						+ "Błąd pobierania plików: " + th.getMessage());
 				reportService.addMessage(report, "-> Błąd pobierania plików: " + th.getMessage());
 			} catch (Throwable th) {
 				logger.fatal("StackTrace: ", th);
-				eventService.createEvent(new Event(fileExchangeStatus,
-						MTTools.getLogDate() + LogStatus.FATAL.getDesc() + th.getMessage()));
+				eventService.createEvent(fileExchangeStatus,
+						MTTools.getLogDate() + LogStatus.FATAL.getDesc() + th.getMessage());
 			}
 			if (receiveFileList.isEmpty()) {
 				logger.error("Brak plików do pobrania");
-				eventService.createEvent(new Event(fileExchangeStatus,
-						MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "Brak plików do pobrania."));
+				eventService.createEvent(fileExchangeStatus,
+						MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "Brak plików do pobrania.");
 				reportService.addMessage(report, "-> Błąd: Brak plików do pobrania");
 			}
 		} else {
 			logger.fatal("Problem z nawiązaniem połączenia.");
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Problem z nawiązaniem połączenia."));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Problem z nawiązaniem połączenia.");
 			reportService.addMessage(report, "-> Problem z nawiązaniem połączenia.");
 		}
 		return receiveFileList;
@@ -282,8 +280,8 @@ public class ProtocolSFTPServiceImpl implements ProtocolSFTPService {
 
 		if (ssh2 != null) {
 			logger.info("Wysyłam pliki na serwer Podmiotu (" + subjectAddress + "):");
-			eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
-					+ "Wysyłam pliki na serwer Podmiotu (" + subjectAddress + "):"));
+			eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
+					+ "Wysyłam pliki na serwer Podmiotu (" + subjectAddress + "):");
 			reportService.addMessage(report, "- Lista plików wysłanych na serwer Podmiotu (" + subjectAddress + "):");
 			try {
 				SftpClient sftp = new SftpClient(ssh2);
@@ -302,31 +300,31 @@ public class ProtocolSFTPServiceImpl implements ProtocolSFTPService {
 
 				for (String fileName : filesList) {
 					logger.info("Pobieram plik: " + fileName + "...");
-					eventService.createEvent(new Event(fileExchangeStatus,
-							MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Pobieram plik: " + fileName + "..."));
+					eventService.createEvent(fileExchangeStatus,
+							MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Pobieram plik: " + fileName + "...");
 					sftp.put(fileName);
 					logger.info("Plik pobrany.");
-					eventService.createEvent(new Event(fileExchangeStatus,
-							MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik pobrany."));
+					eventService.createEvent(fileExchangeStatus,
+							MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik pobrany.");
 					reportService.addMessage(report, fileName);
 				}
 			} catch (SftpStatusException th) {
 				logger.fatal("Błąd przesyłania plików: " + th.getMessage());
-				eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc()
-						+ "Błąd przesyłania plików: " + th.getMessage()));
+				eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc()
+						+ "Błąd przesyłania plików: " + th.getMessage());
 				reportService.addMessage(report, "-> Błąd przesyłania plików: " + th.getMessage());
 				return false;
 			} catch (Throwable th) {
 				logger.fatal("StackTrace: ", th);
-				eventService.createEvent(new Event(fileExchangeStatus,
-						MTTools.getLogDate() + LogStatus.FATAL.getDesc() + th.getMessage()));
+				eventService.createEvent(fileExchangeStatus,
+						MTTools.getLogDate() + LogStatus.FATAL.getDesc() + th.getMessage());
 				return false;
 			}
 			return true;
 		} else {
 			logger.fatal("Problem z nawiązaniem połączenia.");
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Problem z nawiązaniem połączenia."));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Problem z nawiązaniem połączenia.");
 			reportService.addMessage(report, "-> Problem z nawiązaniem połączenia.");
 			return false;
 		}
@@ -338,8 +336,8 @@ public class ProtocolSFTPServiceImpl implements ProtocolSFTPService {
 
 		try {
 			logger.info("Inicjalizacja połączenia....");
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Inicjalizacja połączenia...."));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Inicjalizacja połączenia....");
 
 			int idx = serverAddress.indexOf(':');
 			int port = 22;
@@ -350,8 +348,8 @@ public class ProtocolSFTPServiceImpl implements ProtocolSFTPService {
 			}
 
 			logger.info("Trwa łączenie do " + serverAddress);
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Trwa łączenie do " + serverAddress));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Trwa łączenie do " + serverAddress);
 
 			/**
 			 * Create an SshConnector instance
@@ -364,16 +362,16 @@ public class ProtocolSFTPServiceImpl implements ProtocolSFTPService {
 				public boolean verifyHost(String adresSerwera, SshPublicKey key) {
 					try {
 						logger.info("Klucz serwera (" + key.getAlgorithm() + "): ");
-						eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate()
-								+ LogStatus.INFO.getDesc() + "Klucz serwera (" + key.getAlgorithm() + "): "));
+						eventService.createEvent(fileExchangeStatus, MTTools.getLogDate()
+								+ LogStatus.INFO.getDesc() + "Klucz serwera (" + key.getAlgorithm() + "): ");
 
 						logger.info(key.getFingerprint());
-						eventService.createEvent(new Event(fileExchangeStatus,
-								MTTools.getLogDate() + LogStatus.INFO.getDesc() + key.getFingerprint()));
+						eventService.createEvent(fileExchangeStatus,
+								MTTools.getLogDate() + LogStatus.INFO.getDesc() + key.getFingerprint());
 					} catch (SshException e) {
 						logger.fatal("Problem z połączeniem. Błąd: " + e.getMessage());
-						eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate()
-								+ LogStatus.FATAL.getDesc() + "Problem z połączeniem. Błąd: " + e.getMessage()));
+						eventService.createEvent(fileExchangeStatus, MTTools.getLogDate()
+								+ LogStatus.FATAL.getDesc() + "Problem z połączeniem. Błąd: " + e.getMessage());
 						reportService.addMessage(report, "-> Problem z połączeniem. Błąd: " + e.getMessage());
 						return false;
 					}
@@ -389,12 +387,12 @@ public class ProtocolSFTPServiceImpl implements ProtocolSFTPService {
 			SshClient ssh = con.connect(new SocketTransport(serverAddress, port), remoteLogin);
 
 			logger.info(serverAddress + "... połączony");
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.INFO.getDesc() + serverAddress + "... połączony"));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.INFO.getDesc() + serverAddress + "... połączony");
 
 			logger.info("Trwa autoryzacja połączenia...");
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Trwa autoryzacja połączenia..."));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Trwa autoryzacja połączenia...");
 			ssh2 = (Ssh2Client) ssh;
 
 			int authStatus;
@@ -412,38 +410,33 @@ public class ProtocolSFTPServiceImpl implements ProtocolSFTPService {
 			}
 		} catch (NoRouteToHostException th) {
 			logger.fatal(th.getMessage());
-			eventService.createEvent(
-					new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc() + th.getMessage()));
+			eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc() + th.getMessage());
 			reportService.addMessage(report, "-> " + serverAddress + ": " + th.getMessage());
 			return null;
 		} catch (FileNotFoundException th) {
 			logger.fatal(th.getMessage());
-			eventService.createEvent(
-					new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc() + th.getMessage()));
+			eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc() + th.getMessage());
 			reportService.addMessage(report, "-> Błąd połączenia z serwerem " + serverAddress + ": " + th.getMessage());
 			return null;
 		} catch (SshException th) {
 			logger.fatal(th.getMessage());
-			eventService.createEvent(
-					new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc() + th.getMessage()));
+			eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc() + th.getMessage());
 			reportService.addMessage(report, "-> Błąd połączenia z serwerem " + serverAddress + ": " + th.getMessage());
 			return null;
 		} catch (ConnectException th) {
 			logger.fatal(th.getMessage());
-			eventService.createEvent(
-					new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc() + th.getMessage()));
+			eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc() + th.getMessage());
 			reportService.addMessage(report, "-> Błąd połączenia z serwerem " + serverAddress + ": " + th.getMessage());
 			return null;
 		} catch (Throwable th) {
 			logger.fatal(th.getMessage());
 			logger.error("StackTrace: ", th);
-			eventService.createEvent(
-					new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc() + th.getMessage()));
+			eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc() + th.getMessage());
 			return null;
 		}
 		logger.info("Autoryzacja poprawna.");
-		eventService.createEvent(new Event(fileExchangeStatus,
-				MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Autoryzacja poprawna."));
+		eventService.createEvent(fileExchangeStatus,
+				MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Autoryzacja poprawna.");
 		return ssh2;
 	}
 
@@ -452,8 +445,8 @@ public class ProtocolSFTPServiceImpl implements ProtocolSFTPService {
 
 		logger.info("Private key file: " + privateKeyName);
 		;
-		eventService.createEvent(new Event(fileExchangeStatus,
-				MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Private key file: " + privateKeyName));
+		eventService.createEvent(fileExchangeStatus,
+				MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Private key file: " + privateKeyName);
 		/**
 		 * Authenticate the user using public key authentication
 		 */
@@ -469,8 +462,8 @@ public class ProtocolSFTPServiceImpl implements ProtocolSFTPService {
 
 		if (authStatus == SshAuthentication.FAILED) {
 			logger.fatal("Niepoprawna autoryzacja kluczem publicznym. Kod błędu: " + authStatus);
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Niepoprawna autoryzacja kluczem publicznym."));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Niepoprawna autoryzacja kluczem publicznym.");
 		}
 		return authStatus;
 	}
@@ -478,8 +471,7 @@ public class ProtocolSFTPServiceImpl implements ProtocolSFTPService {
 	private int passwordAuthentication(String remotePassword, Ssh2Client ssh2, FileExchangeStatus fileExchangeStatus)
 			throws IOException, InvalidPassphraseException, SshException {
 		logger.info("Password: " + "*****");
-		eventService.createEvent(
-				new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Hasło: " + "*****"));
+		eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Hasło: " + "*****");
 		/**
 		 * Authenticate the user using password authentication
 		 */
@@ -490,14 +482,14 @@ public class ProtocolSFTPServiceImpl implements ProtocolSFTPService {
 		switch (authStatus) {
 		case SshAuthentication.FAILED:
 			logger.fatal("Niepoprawna autoryzacja hasłem. Kod błędu: " + authStatus);
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Niepoprawna autoryzacja hasłem."));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Niepoprawna autoryzacja hasłem.");
 			return authStatus;
 		case SshAuthentication.FURTHER_AUTHENTICATION_REQUIRED:
 			logger.fatal(
 					"Wymagana jest dodatkowa autoryzacja przy pomocy klucza publicznego. Kod błędu: " + authStatus);
-			eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc()
-					+ "Wymagana jest dodatkowa autoryzacja przy pomocy klucza publicznego."));
+			eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc()
+					+ "Wymagana jest dodatkowa autoryzacja przy pomocy klucza publicznego.");
 			return authStatus;
 		default:
 			return authStatus;

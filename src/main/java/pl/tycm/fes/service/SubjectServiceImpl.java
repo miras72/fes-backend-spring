@@ -16,7 +16,6 @@ import pl.tycm.fes.exception.DecryptionKeyNotFoundException;
 import pl.tycm.fes.exception.EncryptionKeyNotFoundException;
 import pl.tycm.fes.exception.ServerConfigNotFoundException;
 import pl.tycm.fes.model.DecryptionKey;
-import pl.tycm.fes.model.Event;
 import pl.tycm.fes.model.FileExchangeStatus;
 import pl.tycm.fes.model.PrivateKeyDTO;
 import pl.tycm.fes.model.Report;
@@ -89,8 +88,8 @@ public class SubjectServiceImpl implements SubjectService {
 			return receiveFileList;
 		default:
 			logger.fatal("Nieprawidłowy protokół wymiany plików");
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Nieprawidłowy protokół wymiany plików."));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Nieprawidłowy protokół wymiany plików.");
 
 			return receiveFileList;
 		}
@@ -119,8 +118,8 @@ public class SubjectServiceImpl implements SubjectService {
 			return protocolSSLService.sendFiles(fileList, taskConfig, workingDirectory, fileExchangeStatus, report);
 		default:
 			logger.fatal("Nieprawidłowy protokół wymiany plików");
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Nieprawidłowy protokół wymiany plików."));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Nieprawidłowy protokół wymiany plików.");
 			return false;
 		}
 	}
@@ -143,8 +142,8 @@ public class SubjectServiceImpl implements SubjectService {
 			return receiveFileList;
 		default:
 			logger.fatal("Nieprawidłowa metoda dekompresji");
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Nieprawidłowa metoda dekompresji"));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Nieprawidłowa metoda dekompresji");
 			return receiveFileList;
 		}
 	}
@@ -168,8 +167,8 @@ public class SubjectServiceImpl implements SubjectService {
 			return receiveFileList;
 		default:
 			logger.fatal("Nieprawidłowa metoda dekrypcji");
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Nieprawidłowa metoda dekrypcji"));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Nieprawidłowa metoda dekrypcji");
 			return receiveFileList;
 		}
 	}
@@ -199,8 +198,8 @@ public class SubjectServiceImpl implements SubjectService {
 
 		default:
 			logger.fatal("Nieprawidłowy protokół wymiany plików");
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Nieprawidłowy protokół wymiany plików."));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Nieprawidłowy protokół wymiany plików.");
 		}
 	}
 

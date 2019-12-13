@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 
 import pl.tycm.fes.LogStatus;
 import pl.tycm.fes.controller.service.EventService;
-import pl.tycm.fes.model.Event;
 import pl.tycm.fes.model.FileExchangeStatus;
 import pl.tycm.fes.model.FileList;
 import pl.tycm.fes.model.Report;
@@ -65,18 +64,17 @@ public class ProtocolFTPServiceImpl implements ProtocolFTPService {
 
 		try {
 			logger.info("Inicjalizacja połączenia...");
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Inicjalizacja połączenia..."));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Inicjalizacja połączenia...");
 
 			logger.info("Trwa łączenie do " + subjectAddress + "...");
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Trwa łączenie do " + subjectAddress + "..."));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Trwa łączenie do " + subjectAddress + "...");
 
 			ftpClient.connect(subjectAddress, port);
 			ftpClient.login(subjectLogin, subjectPassword);
 			logger.info("Połączony.");
-			eventService.createEvent(
-					new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Połączony."));
+			eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Połączony.");
 			ftpClient.enterLocalPassiveMode();
 			ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
 
@@ -101,14 +99,14 @@ public class ProtocolFTPServiceImpl implements ProtocolFTPService {
 			FTPFile[] result = ftpClient.listFiles(subjectDirectory, filter);
 
 			logger.info("Pobieram pliki z serwera Podmiotu (" + subjectAddress + "):");
-			eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
-					+ "Pobieram pliki z serwera Podmiotu (" + subjectAddress + "):"));
+			eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
+					+ "Pobieram pliki z serwera Podmiotu (" + subjectAddress + "):");
 			reportService.addMessage(report, "- Lista plików pobranych z serwera Podmiotu (" + subjectAddress + "):");
 			if (result != null && result.length > 0) {
 				for (FTPFile fileName : result) {
 					logger.info("Pobieram plik: " + fileName.getName() + "...");
-					eventService.createEvent(new Event(fileExchangeStatus,
-							MTTools.getLogDate() + LogStatus.INFO.getDesc() + fileName.getName() + "..."));
+					eventService.createEvent(fileExchangeStatus,
+							MTTools.getLogDate() + LogStatus.INFO.getDesc() + fileName.getName() + "...");
 
 					String remoteFile = fileName.getName();
 					File downloadFile = new File(workingDirectory + File.separator + fileName.getName());
@@ -124,8 +122,8 @@ public class ProtocolFTPServiceImpl implements ProtocolFTPService {
 					if (success) {
 						receiveFileList.add(remoteFile);
 						logger.info("Plik pobrany.");
-						eventService.createEvent(new Event(fileExchangeStatus,
-								MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik pobrany."));
+						eventService.createEvent(fileExchangeStatus,
+								MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik pobrany.");
 						reportService.addMessage(report, remoteFile);
 					}
 					outputStream.close();
@@ -133,19 +131,19 @@ public class ProtocolFTPServiceImpl implements ProtocolFTPService {
 				}
 			} else {
 				logger.error("Brak plików do pobrania");
-				eventService.createEvent(new Event(fileExchangeStatus,
-						MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "Brak plików do pobrania"));
+				eventService.createEvent(fileExchangeStatus,
+						MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "Brak plików do pobrania");
 				reportService.addMessage(report, "-> Brak plików do pobrania.");
 			}
 		} catch (FTPConnectionClosedException ex) {
 			logger.fatal("Błąd połączenia: " + ex.getMessage());
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Błąd połączenia: " + ex.getMessage()));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Błąd połączenia: " + ex.getMessage());
 			reportService.addMessage(report, "-> Błąd: Nie moża połączyć się z serwerem: " + subjectAddress);
 		} catch (IOException ex) {
 			logger.fatal("StackTrace: ", ex);
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Błąd: " + ex.getMessage()));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Błąd: " + ex.getMessage());
 			reportService.addMessage(report, "-> Błąd podczas pobierania plików.");
 		} finally {
 			try {
@@ -155,8 +153,8 @@ public class ProtocolFTPServiceImpl implements ProtocolFTPService {
 				}
 			} catch (IOException ex) {
 				logger.fatal("StackTrace: ", ex);
-				eventService.createEvent(new Event(fileExchangeStatus,
-						MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Błąd: " + ex.getMessage()));
+				eventService.createEvent(fileExchangeStatus,
+						MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Błąd: " + ex.getMessage());
 			}
 		}
 		return receiveFileList;

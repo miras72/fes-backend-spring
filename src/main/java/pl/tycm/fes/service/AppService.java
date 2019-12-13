@@ -22,7 +22,6 @@ import pl.tycm.fes.controller.service.ServerConfigService;
 import pl.tycm.fes.controller.service.TaskConfigService;
 import pl.tycm.fes.controller.service.TaskStatusService;
 import pl.tycm.fes.exception.ServerConfigNotFoundException;
-import pl.tycm.fes.model.Event;
 import pl.tycm.fes.model.FileExchangeStatus;
 import pl.tycm.fes.model.FileList;
 import pl.tycm.fes.model.Report;
@@ -111,29 +110,29 @@ public class AppService {
 			FileExchangeStatus fileExchangeStatusCreated = fileExchangeStatusService
 					.createFileExchangeStatus(fileExchangeStatus);
 
-			eventService.createEvent(new Event(fileExchangeStatusCreated, "-------"));
+			eventService.createEvent(fileExchangeStatusCreated, "-------");
 
 			logger.info("Start logowania zdarzeń");
-			eventService.createEvent(new Event(fileExchangeStatusCreated,
-					MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Start logowania zdarzeń"));
+			eventService.createEvent(fileExchangeStatusCreated,
+					MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Start logowania zdarzeń");
 
 			logger.info(String.format("Wymiana danych z podmiotem %s...", taskConfig.getSubjectName()));
 			eventService.createEvent(
-					new Event(fileExchangeStatusCreated, MTTools.getLogDate() + LogStatus.INFO.getDesc()
-							+ String.format("Wymiana danych z podmiotem %s...", taskConfig.getSubjectName())));
+					fileExchangeStatusCreated, MTTools.getLogDate() + LogStatus.INFO.getDesc()
+							+ String.format("Wymiana danych z podmiotem %s...", taskConfig.getSubjectName()));
 
 			ServerConfig serverConfig = serverConfigService.getServerConfig();
 			String workingDirectory = serverConfig.getWorkDirectory();
 
 			if (!Files.isDirectory(Paths.get(workingDirectory))) {
 				logger.info("Tworzę katalog roboczy: " + workingDirectory);
-				eventService.createEvent(new Event(fileExchangeStatusCreated, MTTools.getLogDate()
-						+ LogStatus.INFO.getDesc() + "Tworzę katalog roboczy: " + workingDirectory + "..."));
+				eventService.createEvent(fileExchangeStatusCreated, MTTools.getLogDate()
+						+ LogStatus.INFO.getDesc() + "Tworzę katalog roboczy: " + workingDirectory + "...");
 
 				if (!new File(workingDirectory).mkdirs()) {
 					logger.error("Nie można utworzyć katalogu roboczego.");
-					eventService.createEvent(new Event(fileExchangeStatusCreated, MTTools.getLogDate()
-							+ LogStatus.ERROR.getDesc() + "Nie można utworzyć katalogu roboczego."));
+					eventService.createEvent(fileExchangeStatusCreated, MTTools.getLogDate()
+							+ LogStatus.ERROR.getDesc() + "Nie można utworzyć katalogu roboczego.");
 
 					taskStatus.setLastStatus("ERROR");
 					lastDataStatus = lastStatusDateFormat.format(new Date());
@@ -143,8 +142,8 @@ public class AppService {
 				}
 
 				logger.info("Katalog utworzony.");
-				eventService.createEvent(new Event(fileExchangeStatusCreated,
-						MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Katalog utworzony."));
+				eventService.createEvent(fileExchangeStatusCreated,
+						MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Katalog utworzony.");
 			}
 
 			Report report = new Report();
@@ -152,8 +151,8 @@ public class AppService {
 			switch (taskConfig.getSubjectMode()) {
 			case "download":
 				logger.info("Tryb wymiany: download");
-				eventService.createEvent(new Event(fileExchangeStatusCreated,
-						MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Tryb wymiany: download"));
+				eventService.createEvent(fileExchangeStatusCreated,
+						MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Tryb wymiany: download");
 				
 				if (stop) {
 					logger.info("Zadanie zostało zatrzymane.");
@@ -229,12 +228,12 @@ public class AppService {
 				mailService.sendMail(taskConfig.getMailSubject(), taskConfig.getMailFrom(), taskConfig.getMailingList(), reportMessage);
 
 				logger.info("Koniec logowania zdarzeń");
-				eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Koniec logowania zdarzeń."));
+				eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Koniec logowania zdarzeń.");
 				break;
 				
 			case "upload":
 				logger.info("Tryb wymiany: upload");
-				eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Tryb wymiany: upload"));
+				eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Tryb wymiany: upload");
 
 				if (stop) {
 					logger.info("Zadanie zostało zatrzymane.");
@@ -277,7 +276,7 @@ public class AppService {
 				mailService.sendMail(taskConfig.getMailSubject(), taskConfig.getMailFrom(), taskConfig.getMailingList(), reportMessage);
 
 				logger.info("Koniec logowania zdarzeń");
-				eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Koniec logowania zdarzeń."));
+				eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Koniec logowania zdarzeń.");
 				break;
 			}
 
@@ -299,8 +298,8 @@ public class AppService {
 		String workingDirectory = serverConfig.getWorkDirectory();
 
 		if (receiveFileList != null) {
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Kasuje pliki w katalogu roboczy..."));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Kasuje pliki w katalogu roboczy...");
 			for (String fileName : receiveFileList) {
 
 				File file = new File(workingDirectory + File.separator + fileName);
@@ -310,19 +309,19 @@ public class AppService {
 					logger.info("Plik skasowany.");
 				} else {
 					logger.error("Błąd: Nie można skasować pliku: " + fileName);
-					eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate()
-							+ LogStatus.ERROR.getDesc() + "Błąd: Nie można skasować pliku: " + fileName));
+					eventService.createEvent(fileExchangeStatus, MTTools.getLogDate()
+							+ LogStatus.ERROR.getDesc() + "Błąd: Nie można skasować pliku: " + fileName);
 				}
 			}
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Pliki w katalogu roboczy skasowane."));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Pliki w katalogu roboczy skasowane.");
 		}
 	}
 
 	private void cancelTask(FileExchangeStatus fileExchangeStatus, TaskStatus taskStatus) {
 		logger.info("Zadanie zostało przerwane");
-		eventService.createEvent(new Event(fileExchangeStatus,
-				MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "Zadanie zostało przerwane."));
+		eventService.createEvent(fileExchangeStatus,
+				MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "Zadanie zostało przerwane.");
 
 		taskStatus.setLastStatus("OK");
 		String lastDataStatus = lastStatusDateFormat.format(new Date());
@@ -342,16 +341,15 @@ public class AppService {
 			FileExchangeStatus fileExchangeStatusCreated = fileExchangeStatusService
 					.createFileExchangeStatus(fileExchangeStatus);
 
-			eventService.createEvent(new Event(fileExchangeStatusCreated, "-------"));
+			eventService.createEvent(fileExchangeStatusCreated, "-------");
 
 			logger.info("Start logowania zdarzeń");
-			eventService.createEvent(new Event(fileExchangeStatusCreated,
-					MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Start logowania zdarzeń"));
+			eventService.createEvent(fileExchangeStatusCreated,
+					MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Start logowania zdarzeń");
 
 			logger.info(String.format("Test połączenia z podmiotem %s...", taskConfig.getSubjectName()));
-			eventService.createEvent(
-					new Event(fileExchangeStatusCreated, MTTools.getLogDate() + LogStatus.INFO.getDesc()
-							+ String.format("Test połączenia z podmiotem %s...", taskConfig.getSubjectName())));
+			eventService.createEvent(fileExchangeStatusCreated, MTTools.getLogDate() + LogStatus.INFO.getDesc()
+							+ String.format("Test połączenia z podmiotem %s...", taskConfig.getSubjectName()));
 			
 			subjectService.subjectTestConnection(taskConfig, fileExchangeStatusCreated);
 			

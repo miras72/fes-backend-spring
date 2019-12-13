@@ -28,7 +28,6 @@ import org.springframework.stereotype.Service;
 
 import pl.tycm.fes.LogStatus;
 import pl.tycm.fes.controller.service.EventService;
-import pl.tycm.fes.model.Event;
 import pl.tycm.fes.model.FileExchangeStatus;
 import pl.tycm.fes.model.FileList;
 import pl.tycm.fes.model.Report;
@@ -76,8 +75,8 @@ public class ProtocolSSLServiceImpl implements ProtocolSSLService {
 
 		try {
 			logger.info("Pobieram pliki z serwera Podmiotu (" + subjectAddress + "):");
-			eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
-					+ "Pobieram pliki z serwera Podmiotu (" + subjectAddress + "):"));
+			eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
+					+ "Pobieram pliki z serwera Podmiotu (" + subjectAddress + "):");
 			reportService.addMessage(report, "- Lista plików pobranych z serwera Podmiotu (" + subjectAddress + "):");
 
 			for (String fileName : filesList) {
@@ -86,8 +85,8 @@ public class ProtocolSSLServiceImpl implements ProtocolSSLService {
 				conn.setUseCaches(false);
 				conn.setRequestMethod("GET");
 				logger.info("Pobieram plik: " + fileName + "...");
-				eventService.createEvent(new Event(fileExchangeStatus,
-						MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Pobieram plik: " + fileName + "..."));
+				eventService.createEvent(fileExchangeStatus,
+						MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Pobieram plik: " + fileName + "...");
 
 				int responseCode = conn.getResponseCode();
 
@@ -112,8 +111,8 @@ public class ProtocolSSLServiceImpl implements ProtocolSSLService {
 					outputStream.close();
 					inputStream.close();
 					logger.info("Plik pobrany");
-					eventService.createEvent(new Event(fileExchangeStatus,
-							MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik pobrany."));
+					eventService.createEvent(fileExchangeStatus,
+							MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik pobrany.");
 
 					// Sprawdza czy pobrany plik jest w formacie html
 					// jezeli jest to pobrany plik zawiera strone z bledem "brak pliku"
@@ -135,9 +134,8 @@ public class ProtocolSSLServiceImpl implements ProtocolSSLService {
 								br.close();
 						} catch (Exception e) {
 							logger.error("Problem podaczas zamykania BufferReader " + e.toString());
-							eventService.createEvent(
-									new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.ERROR.getDesc()
-											+ "Problem podaczas zamykania BufferReader " + e.toString()));
+							eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.ERROR.getDesc()
+											+ "Problem podaczas zamykania BufferReader " + e.toString());
 						}
 					}
 
@@ -150,53 +148,51 @@ public class ProtocolSSLServiceImpl implements ProtocolSSLService {
 
 						if (!Files.isDirectory(Paths.get(workingDirectory + File.separator + ERROR_DIRECTORY))) {
 							logger.info("Tworzę katalog na pliki html: " + ERROR_DIRECTORY);
-							eventService.createEvent(
-									new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
-											+ "Tworzę katalog na pliki html: " + ERROR_DIRECTORY + "..."));
+							eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
+											+ "Tworzę katalog na pliki html: " + ERROR_DIRECTORY + "...");
 
 							if (!new File(workingDirectory + File.separator + ERROR_DIRECTORY).mkdirs()) {
 								logger.error("Nie można utworzyć katalogu na pliki html.");
-								eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate()
-										+ LogStatus.ERROR.getDesc() + "Nie można utworzyć katalogu na pliki html."));
+								eventService.createEvent(fileExchangeStatus, MTTools.getLogDate()
+										+ LogStatus.ERROR.getDesc() + "Nie można utworzyć katalogu na pliki html.");
 							}
 							logger.info("Katalog na pliki html utworzony.");
-							eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate()
-									+ LogStatus.INFO.getDesc() + "Katalog na pliki html utworzony."));
+							eventService.createEvent(fileExchangeStatus, MTTools.getLogDate()
+									+ LogStatus.INFO.getDesc() + "Katalog na pliki html utworzony.");
 						}
 						File destinationFile = new File(workingDirectory + File.separator + ERROR_DIRECTORY
 								+ File.separator + fileName + ".html");
 						logger.info("Zmieniam nazwę pliku: " + fileName + " -> " + fileName + ".html");
-						eventService.createEvent(
-								new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
-										+ "Zmieniam nazwę pliku: " + fileName + " -> " + fileName + ".html"));
+						eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
+										+ "Zmieniam nazwę pliku: " + fileName + " -> " + fileName + ".html");
 
 						destinationFile.delete();
 						if (!sourceFile.renameTo(destinationFile)) {
 							logger.error("Błąd: Nie można zmienić nazwy pliku: " + fileName);
-							eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate()
-									+ LogStatus.ERROR.getDesc() + "Błąd: Nie można zmienić nazwy pliku: " + fileName));
+							eventService.createEvent(fileExchangeStatus, MTTools.getLogDate()
+									+ LogStatus.ERROR.getDesc() + "Błąd: Nie można zmienić nazwy pliku: " + fileName);
 						}
 					}
 				} else {
 					logger.error("Problem z pobraniem pliku. Kod odpowiedzi serwera https: " + responseCode);
 					eventService
-							.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.ERROR.getDesc()
-									+ "Problem z pobraniem pliku. Kod odpowiedzi serwera https: " + responseCode));
+							.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.ERROR.getDesc()
+									+ "Problem z pobraniem pliku. Kod odpowiedzi serwera https: " + responseCode);
 					reportService.addMessage(report, "-> Problem z pobraniem pliku: " + fileName);
 				}
 			}
 
 		} catch (IOException ex) {
 			logger.fatal("StackTrace: ", ex);
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Błąd: " + ex.getMessage()));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Błąd: " + ex.getMessage());
 		} finally {
 			this.closeSSLConnection(subjectAddress, logoutForm, fileExchangeStatus, report);
 		}
 		if (!status) {
 			logger.error("Brak plików do pobrania.");
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "Brak plików do pobrania."));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "Brak plików do pobrania.");
 			reportService.addMessage(report, "-> Brak plików do pobrania");
 		}
 		return receiveFileList;
@@ -211,12 +207,12 @@ public class ProtocolSSLServiceImpl implements ProtocolSSLService {
 
 		try {
 			logger.info("Inicjalizacja połączenia...");
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Inicjalizacja połączenia..."));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Inicjalizacja połączenia...");
 
 			logger.info("Trwa łączenie do " + serverAddress);
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Trwa łączenie do " + serverAddress));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Trwa łączenie do " + serverAddress);
 
 			if (loginForm != null)
 				url = MTTools.getConvertUrlForm(serverAddress, subjectLogin, subjectPassword, loginForm);
@@ -229,8 +225,8 @@ public class ProtocolSSLServiceImpl implements ProtocolSSLService {
 
 			if (loginForm == null) {
 				logger.info("Autoryzacja BasicAuth...");
-				eventService.createEvent(new Event(fileExchangeStatus,
-						MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Autoryzacja BasicAuth..."));
+				eventService.createEvent(fileExchangeStatus,
+						MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Autoryzacja BasicAuth...");
 
 				String userPass = subjectLogin + ":" + subjectPassword;
 				String basicAuth = "Basic " + new String(Base64.encodeBase64(userPass.getBytes()));
@@ -239,26 +235,26 @@ public class ProtocolSSLServiceImpl implements ProtocolSSLService {
 			int responseCode = conn.getResponseCode();
 			if (responseCode == 200) {
 				logger.info("Autoryzacja na serwerzez https poprawna. Kod odpowiedzi serwera: " + responseCode);
-				eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
-						+ "Autoryzacja na serwerzez https poprawna. Kod odpowiedzi serwera: " + responseCode));
+				eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
+						+ "Autoryzacja na serwerzez https poprawna. Kod odpowiedzi serwera: " + responseCode);
 			} else {
 				logger.fatal("Błąd autoryzacji. Kod odpowiedzi serwera https: " + responseCode);
-				eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc()
-						+ "Błąd autoryzacji. Kod odpowiedzi serwera https: " + responseCode));
+				eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc()
+						+ "Błąd autoryzacji. Kod odpowiedzi serwera https: " + responseCode);
 				reportService.addMessage(report, "-> Błąd: Nie powiodła się autoryzacja na serwerze");
 				return false;
 			}
 			return true;
 		} catch (ConnectException ex) {
 			logger.fatal("Błąd połączenia: " + ex.getMessage());
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Błąd połączenia: " + ex.getMessage()));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Błąd połączenia: " + ex.getMessage());
 			reportService.addMessage(report, "-> Błąd: Nie moża połączyć się z serwerem");
 			return false;
 		} catch (IOException ex) {
 			logger.fatal("StackTrace: ", ex);
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Błąd: " + ex.getMessage()));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Błąd: " + ex.getMessage());
 			return false;
 		}
 	}
@@ -274,19 +270,19 @@ public class ProtocolSSLServiceImpl implements ProtocolSSLService {
 				if (responseCode == 200) {
 					logger.info("Wylogowanie z serwera poprawne. Kod odpowiedzi serwera: " + responseCode);
 					eventService
-							.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
-									+ "Wylogowanie z serwera poprawne. Kod odpowiedzi serwera: " + responseCode));
+							.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
+									+ "Wylogowanie z serwera poprawne. Kod odpowiedzi serwera: " + responseCode);
 
 				} else {
 					logger.error("Błąd wylogowania z serwera. Kod odpowiedzi serwera https: " + responseCode);
 					eventService
-							.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.ERROR.getDesc()
-									+ "Błąd wylogowania z serwera. Kod odpowiedzi serwera https: " + responseCode));
+							.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.ERROR.getDesc()
+									+ "Błąd wylogowania z serwera. Kod odpowiedzi serwera https: " + responseCode);
 				}
 			} catch (IOException ex) {
 				logger.fatal("StackTrace: ", ex);
-				eventService.createEvent(new Event(fileExchangeStatus,
-						MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Błąd: " + ex.getMessage()));
+				eventService.createEvent(fileExchangeStatus,
+						MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Błąd: " + ex.getMessage());
 			}
 		}
 	}
@@ -314,8 +310,8 @@ public class ProtocolSSLServiceImpl implements ProtocolSSLService {
 			return false;
 
 		logger.info("Wysyłam pliki na serwer Podmiotu (" + subjectAddress + "):");
-		eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
-				+ "Wysyłam pliki na serwer Podmiotu (" + subjectAddress + "):"));
+		eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
+				+ "Wysyłam pliki na serwer Podmiotu (" + subjectAddress + "):");
 		reportService.addMessage(report, "- Lista plików wysłanych na serwer Podmiotu (" + subjectAddress + "):");
 
 		for (String fileName : filesList) {
@@ -330,8 +326,8 @@ public class ProtocolSSLServiceImpl implements ProtocolSSLService {
 
 				conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
 				logger.info("Przesyłam plik: " + fileName + "...");
-				eventService.createEvent(new Event(fileExchangeStatus,
-						MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Przesyłam plik: " + fileName + "..."));
+				eventService.createEvent(fileExchangeStatus,
+						MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Przesyłam plik: " + fileName + "...");
 
 				File uploadFile = new File(workingDirectory + File.separator + fileName);
 				FileInputStream inputStream = new FileInputStream(uploadFile);
@@ -381,13 +377,13 @@ public class ProtocolSSLServiceImpl implements ProtocolSSLService {
 				outputStream.flush();
 
 				logger.info("Plik skopiowany.");
-				eventService.createEvent(new Event(fileExchangeStatus,
-						MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik skopiowany."));
+				eventService.createEvent(fileExchangeStatus,
+						MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik skopiowany.");
 
 				int responseCode = conn.getResponseCode();
 				logger.info("Kod odpowiedzi serwera https: " + responseCode);
-				eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
-						+ "Kod odpowiedzi serwera https: " + responseCode));
+				eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
+						+ "Kod odpowiedzi serwera https: " + responseCode);
 
 				if (responseCode == 200) {
 					// Sprawdza czy plik odpowiedzi serwera zawiera responseString
@@ -410,40 +406,39 @@ public class ProtocolSSLServiceImpl implements ProtocolSSLService {
 								br.close();
 						} catch (Exception e) {
 							logger.error("Problem podaczas zamykania BufferReader " + e.toString());
-							eventService.createEvent(
-									new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.ERROR.getDesc()
-											+ "Problem podaczas zamykania BufferReader " + e.toString()));
+							eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.ERROR.getDesc()
+											+ "Problem podaczas zamykania BufferReader " + e.toString());
 							;
 						}
 					}
 
 					if (found) {
 						logger.info("Plik przesłany na serwer.");
-						eventService.createEvent(new Event(fileExchangeStatus,
-								MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik przesłany na serwer"));
+						eventService.createEvent(fileExchangeStatus,
+								MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik przesłany na serwer");
 						reportService.addMessage(report, fileName);
 					} else {
 						logger.error("Problem z przesłaniem pliku: " + fileName);
-						eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate()
-								+ LogStatus.ERROR.getDesc() + "Problem z przesłaniem pliku: " + fileName));
+						eventService.createEvent(fileExchangeStatus, MTTools.getLogDate()
+								+ LogStatus.ERROR.getDesc() + "Problem z przesłaniem pliku: " + fileName);
 						reportService.addMessage(report, "-> Problem z przesłaniem pliku: " + fileName);
 					}
 				} else {
 					logger.error("Problem z przesłaniem pliku. Kod odpowiedzi serwera https: " + responseCode);
 					eventService
-							.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.ERROR.getDesc()
-									+ "Problem z przesłaniem pliku. Kod odpowiedzi serwera https: " + responseCode));
+							.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.ERROR.getDesc()
+									+ "Problem z przesłaniem pliku. Kod odpowiedzi serwera https: " + responseCode);
 					reportService.addMessage(report, "-> Problem z przesłaniem pliku: " + fileName);
 				}
 			} catch (FileNotFoundException ex) {
 				logger.fatal("Błąd: " + ex.getMessage());
-				eventService.createEvent(new Event(fileExchangeStatus,
-						MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Błąd: " + ex.getMessage()));
+				eventService.createEvent(fileExchangeStatus,
+						MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Błąd: " + ex.getMessage());
 				reportService.addMessage(report, "-> Błąd: Nie istnieje plik: " + fileName);
 			} catch (IOException ex) {
 				logger.fatal("StackTrace: ", ex);
-				eventService.createEvent(new Event(fileExchangeStatus,
-						MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Błąd: " + ex.getMessage()));
+				eventService.createEvent(fileExchangeStatus,
+						MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Błąd: " + ex.getMessage());
 			}
 		}
 		this.closeSSLConnection(subjectAddress, logoutForm, fileExchangeStatus, report);

@@ -34,7 +34,6 @@ import org.springframework.stereotype.Service;
 
 import pl.tycm.fes.LogStatus;
 import pl.tycm.fes.controller.service.EventService;
-import pl.tycm.fes.model.Event;
 import pl.tycm.fes.model.FileExchangeStatus;
 import pl.tycm.fes.model.Report;
 import pl.tycm.fes.util.MTTools;
@@ -65,8 +64,8 @@ public class PgpServiceImpl implements PgpService {
 				String outputFileName = fileName.replace(".pgp", "");
 
 				logger.info("Dekrypcja pliku: " + fileName + "...");
-				eventService.createEvent(new Event(fileExchangeStatus,
-						MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Dekrypcja pliku: " + fileName + "..."));
+				eventService.createEvent(fileExchangeStatus,
+						MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Dekrypcja pliku: " + fileName + "...");
 
 				InputStream keyIn = new ByteArrayInputStream(decryptionKey);
 
@@ -81,31 +80,31 @@ public class PgpServiceImpl implements PgpService {
 					decryptFile(in, keyIn, passwd, workingDirectory, out);
 
 					logger.info("Plik z dekryptowany.");
-					eventService.createEvent(new Event(fileExchangeStatus,
-							MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik z dekryptowany."));
+					eventService.createEvent(fileExchangeStatus,
+							MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik z dekryptowany.");
 
 					in.close();
 					out.close();
 					newReceiveFileList.add(outputFileName);
 				} catch (PGPException ex) {
 					logger.error("StackTrace: ", ex);
-					eventService.createEvent(new Event(fileExchangeStatus,
-							MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "ERROR " + ex.getMessage()));
+					eventService.createEvent(fileExchangeStatus,
+							MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "ERROR " + ex.getMessage());
 					reportService.addMessage(report, "-> Błąd: Nie powiodła się operacja dekrypcji pliku: " + fileName);
 				} catch (IllegalArgumentException ex) {
 					logger.error("StackTrace: ", ex);
-					eventService.createEvent(new Event(fileExchangeStatus,
-							MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "ERROR " + ex.getMessage()));
+					eventService.createEvent(fileExchangeStatus,
+							MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "ERROR " + ex.getMessage());
 					reportService.addMessage(report, "-> Błąd: Nie powiodła się operacja dekrypcji pliku: " + fileName);
 				} catch (NoSuchProviderException ex) {
 					logger.error("StackTrace: ", ex);
-					eventService.createEvent(new Event(fileExchangeStatus,
-							MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "ERROR " + ex.getMessage()));
+					eventService.createEvent(fileExchangeStatus,
+							MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "ERROR " + ex.getMessage());
 					reportService.addMessage(report, "-> Błąd: Nie powiodła się operacja dekrypcji pliku: " + fileName);
 				} catch (IOException ex) {
 					logger.error("StackTrace: ", ex);
-					eventService.createEvent(new Event(fileExchangeStatus,
-							MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "ERROR " + ex.getMessage()));
+					eventService.createEvent(fileExchangeStatus,
+							MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "ERROR " + ex.getMessage());
 					reportService.addMessage(report, "-> Błąd: Nie powiodła się operacja dekrypcji pliku: " + fileName);
 				} finally {
 					try {
@@ -114,8 +113,8 @@ public class PgpServiceImpl implements PgpService {
 						}
 					} catch (IOException ex) {
 						logger.error("StackTrace: ", ex);
-						eventService.createEvent(new Event(fileExchangeStatus,
-								MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "ERROR " + ex.getMessage()));
+						eventService.createEvent(fileExchangeStatus,
+								MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "ERROR " + ex.getMessage());
 					}
 					try {
 						if (out != null) {
@@ -123,8 +122,8 @@ public class PgpServiceImpl implements PgpService {
 						}
 					} catch (IOException ex) {
 						logger.error("StackTrace: ", ex);
-						eventService.createEvent(new Event(fileExchangeStatus,
-								MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "ERROR " + ex.getMessage()));
+						eventService.createEvent(fileExchangeStatus,
+								MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "ERROR " + ex.getMessage());
 					}
 					try {
 						if (keyIn != null) {
@@ -132,19 +131,19 @@ public class PgpServiceImpl implements PgpService {
 						}
 					} catch (IOException ex) {
 						logger.error("StackTrace: ", ex);
-						eventService.createEvent(new Event(fileExchangeStatus,
-								MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "ERROR " + ex.getMessage()));
+						eventService.createEvent(fileExchangeStatus,
+								MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "ERROR " + ex.getMessage());
 					}
 					File file = new File(workingDirectory + File.separator + fileName);					
 					logger.info("Kasuje plik: " + fileName + "...");
-					eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Kasuje plik: " + fileName + "..."));
+					eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Kasuje plik: " + fileName + "...");
 					
 					if (file.delete()) {						
 						logger.info("Plik skasowany.");
-						eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik skasowany."));
+						eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik skasowany.");
 					} else {						
 						logger.error("Błąd: Nie można skasować pliku: " + fileName);
-						eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "Błąd: Nie można skasować pliku: " + fileName));
+						eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "Błąd: Nie można skasować pliku: " + fileName);
 					}
 				}
 

@@ -31,7 +31,6 @@ import jcifs.smb.SmbFile;
 import jcifs.smb.SmbFileOutputStream;
 import pl.tycm.fes.LogStatus;
 import pl.tycm.fes.controller.service.EventService;
-import pl.tycm.fes.model.Event;
 import pl.tycm.fes.model.FileExchangeStatus;
 import pl.tycm.fes.model.Server;
 import pl.tycm.fes.model.Report;
@@ -64,8 +63,8 @@ public class ServerServiceImpl implements ServerService {
 		File directory = new File(workingDirectory);
 		for (Server server : servers) {
 			logger.info("Kopiuje pliki na serwer (" + server.getServerAddress() + "):");
-			eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
-					+ "Kopiuje pliki na serwer (" + server.getServerAddress() + ")..."));
+			eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
+					+ "Kopiuje pliki na serwer (" + server.getServerAddress() + ")...");
 			reportService.addMessage(report,
 					"- Lista plików skopiowanych na serwer (" + server.getServerAddress() + "):");
 
@@ -89,8 +88,8 @@ public class ServerServiceImpl implements ServerService {
 
 					for (String fileName : receiveFileList) {
 						logger.info("Kopiuje plik: " + fileName);
-						eventService.createEvent(new Event(fileExchangeStatus,
-								MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Kopiuje plik: " + fileName));
+						eventService.createEvent(fileExchangeStatus,
+								MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Kopiuje plik: " + fileName);
 						in = new FileInputStream(directory + File.separator + fileName);
 						smbFile = share.openFile(fileName,
 								EnumSet.of(AccessMask.GENERIC_WRITE, AccessMask.GENERIC_READ), null, null,
@@ -100,8 +99,8 @@ public class ServerServiceImpl implements ServerService {
 						in.close();
 
 						logger.info("Plik skopiowany.");
-						eventService.createEvent(new Event(fileExchangeStatus,
-								MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik skopiowany."));
+						eventService.createEvent(fileExchangeStatus,
+								MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik skopiowany.");
 						reportService.addMessage(report, fileName);
 
 						isOK = true;
@@ -109,8 +108,8 @@ public class ServerServiceImpl implements ServerService {
 				} catch (SMBApiException e) {
 					logger.fatal(e.getMessage());
 					eventService
-							.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc()
-									+ "Nieprawidłowa nazwa zasobu: " + server.getServerDirectory()));
+							.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc()
+									+ "Nieprawidłowa nazwa zasobu: " + server.getServerDirectory());
 					reportService.addMessage(report,
 							"-> Błąd: Nieprawidłowa nazwa zasobu: " + server.getServerDirectory());
 					isOK = false;
@@ -134,14 +133,14 @@ public class ServerServiceImpl implements ServerService {
 				}
 				if (cause instanceof SMB1NotSupportedException) {
 					logger.info("Serwer nie obsługuje protokołu SMB2!!! Zmiana protokołu na SMB1.");
-					eventService.createEvent(new Event(fileExchangeStatus,
-							MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Serwer nie obsługuje protokołu SMB2!!! Zmiana protokołu na SMB1."));
+					eventService.createEvent(fileExchangeStatus,
+							MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Serwer nie obsługuje protokołu SMB2!!! Zmiana protokołu na SMB1.");
 					isOK = sendFilesSMB1(directory, receiveFileList, server, fileExchangeStatus, report);
 				} else {
 					logger.fatal("StackTrace: ", originalException);
 					eventService
-							.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc()
-									+ "Problem z połączeniem do serwera: " + server.getServerAddress()));
+							.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc()
+									+ "Problem z połączeniem do serwera: " + server.getServerAddress());
 					reportService.addMessage(report,
 							"-> Błąd: Problem z połączeniem do serwera: " + server.getServerAddress());
 					isOK = false;
@@ -167,8 +166,8 @@ public class ServerServiceImpl implements ServerService {
 
 		for (Server server : servers) {
 			logger.info("Pobieram pliki z serwera (" + server.getServerAddress() + "):");
-			eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
-					+ "Pobieram pliki z serwera (" + server.getServerAddress() + ") ..."));
+			eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc()
+					+ "Pobieram pliki z serwera (" + server.getServerAddress() + ") ...");
 			reportService.addMessage(report,
 					"- Lista plików pobranych z serwera (" + server.getServerAddress() + "):");
 
@@ -197,8 +196,8 @@ public class ServerServiceImpl implements ServerService {
 							out = new FileOutputStream(directory + File.separator + fileName);
 
 							logger.info("Pobieram plik: " + fileName);
-							eventService.createEvent(new Event(fileExchangeStatus,
-									MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Pobieram plik: " + fileName));
+							eventService.createEvent(fileExchangeStatus,
+									MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Pobieram plik: " + fileName);
 
 							byte[] bytesArray = new byte[16 * 4096];
 							int bytesRead = -1;
@@ -210,8 +209,8 @@ public class ServerServiceImpl implements ServerService {
 							status = true;
 
 							logger.info("Plik pobrany.");
-							eventService.createEvent(new Event(fileExchangeStatus,
-									MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik pobrany."));
+							eventService.createEvent(fileExchangeStatus,
+									MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik pobrany.");
 							reportService.addMessage(report, fileName);
 
 							out.close();
@@ -224,8 +223,8 @@ public class ServerServiceImpl implements ServerService {
 				} catch (SMBApiException e) {
 					logger.fatal(e.getMessage());
 					eventService
-							.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc()
-									+ "Błąd podczas pobierania pliku z serwera: " + e.getStatusCode()));
+							.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc()
+									+ "Błąd podczas pobierania pliku z serwera: " + e.getStatusCode());
 					reportService.addMessage(report, "-> Błąd podczas pobierania pliku z serwera.");
 					status = true;
 				} catch (Exception e) {
@@ -247,8 +246,8 @@ public class ServerServiceImpl implements ServerService {
 		}
 		if (!status) {
 			logger.error("Brak plików do pobrania.");
-			eventService.createEvent(new Event(fileExchangeStatus,
-					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Brak plików do pobrania."));
+			eventService.createEvent(fileExchangeStatus,
+					MTTools.getLogDate() + LogStatus.FATAL.getDesc() + "Brak plików do pobrania.");
 			reportService.addMessage(report, "-> Błąd: Brak plików do pobrania");
 		}
 		return receiveFileList;
@@ -276,8 +275,8 @@ public class ServerServiceImpl implements ServerService {
 						+ server.getServerDirectory() + "/" + fileName, auth);
 				SmbFileOutputStream smbfos = new SmbFileOutputStream(newFile);
 				logger.info("Kopiuje plik: " + fileName);
-				eventService.createEvent(new Event(fileExchangeStatus,
-						MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Kopiuje plik: " + fileName));
+				eventService.createEvent(fileExchangeStatus,
+						MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Kopiuje plik: " + fileName);
 
 				byte[] bytesArray = new byte[16 * 4096];
 				int bytesRead = -1;
@@ -288,8 +287,8 @@ public class ServerServiceImpl implements ServerService {
 				smbfos.close();
 
 				logger.info("Plik skopiowany.");
-				eventService.createEvent(new Event(fileExchangeStatus,
-						MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik skopiowany."));
+				eventService.createEvent(fileExchangeStatus,
+						MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik skopiowany.");
 				reportService.addMessage(report, fileName);
 
 				isOK = true;
@@ -298,24 +297,24 @@ public class ServerServiceImpl implements ServerService {
 				switch (ex.getMessage()) {
 				case "0xC000007F":
 					logger.fatal("Brak miejsca na dysku kod błądu: " + ex.getMessage());
-					eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate()
-							+ LogStatus.FATAL.getDesc() + "Brak miejsca na dysku kod błądu: " + ex.getMessage()));
+					eventService.createEvent(fileExchangeStatus, MTTools.getLogDate()
+							+ LogStatus.FATAL.getDesc() + "Brak miejsca na dysku kod błądu: " + ex.getMessage());
 					reportService.addMessage(report,
 							"-> Błąd: Brak miejsca na dysku. Nie powiodła się próba skopiowania pliku: " + fileName);
 					isOK = false;
 					break;
 				default:
 					logger.fatal("StackTrace: ", ex);
-					eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate()
-							+ LogStatus.FATAL.getDesc() + "Nie powiodła się próba skopiowania pliku: " + fileName));
+					eventService.createEvent(fileExchangeStatus, MTTools.getLogDate()
+							+ LogStatus.FATAL.getDesc() + "Nie powiodła się próba skopiowania pliku: " + fileName);
 					reportService.addMessage(report, "-> Błąd: Nie powiodła się próba skopiowania pliku: " + fileName);
 					isOK = false;
 					break;
 				}
 			} catch (IOException ex) {
 				logger.fatal("StackTrace: ", ex);
-				eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc()
-						+ "Nie powiodła się próba skopiowania pliku: " + fileName));
+				eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.FATAL.getDesc()
+						+ "Nie powiodła się próba skopiowania pliku: " + fileName);
 				reportService.addMessage(report, "-> Błąd: Nie powiodła się próba skopiowania pliku: " + fileName);
 				isOK = false;
 			} finally {

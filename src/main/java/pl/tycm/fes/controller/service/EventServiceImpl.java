@@ -3,6 +3,7 @@ package pl.tycm.fes.controller.service;
 import org.springframework.stereotype.Service;
 
 import pl.tycm.fes.model.Event;
+import pl.tycm.fes.model.FileExchangeStatus;
 import pl.tycm.fes.repository.EventRepository;
 
 @Service
@@ -14,9 +15,10 @@ public class EventServiceImpl implements EventService {
 		this.eventRepository = eventRepository;
 	}
 
-	//@Transactional(propagation = Propagation.REQUIRES_NEW)
+	// @Transactional(propagation = Propagation.REQUIRES_NEW)
 	@Override
-	public Event createEvent(Event event) {
+	public Event createEvent(FileExchangeStatus fileExchangeStatus, String eventText) {
+		Event event = new Event(fileExchangeStatus, eventText);
 		return eventRepository.save(event);
 	}
 }

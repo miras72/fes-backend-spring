@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import pl.tycm.fes.LogStatus;
 import pl.tycm.fes.controller.service.EventService;
-import pl.tycm.fes.model.Event;
 import pl.tycm.fes.model.FileExchangeStatus;
 import pl.tycm.fes.model.Report;
 import pl.tycm.fes.util.MTTools;
@@ -44,7 +43,7 @@ public class GzipServiceImpl implements GzipService {
 				FileInputStream fis = null;
 				try {
 					logger.info("Dekompresuje plik: " + fileName + "...");
-					eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Dekompresuje plik: " + fileName + "..."));
+					eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Dekompresuje plik: " + fileName + "...");
 					
 					fis = new FileInputStream(workingDirectory + File.separator + fileName);
 					GzipCompressorInputStream gis = new GzipCompressorInputStream(fis);
@@ -61,12 +60,12 @@ public class GzipServiceImpl implements GzipService {
 					fis.close();
 					
 					logger.info("Plik z dekompresowany.");
-					eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik z dekompresowany."));
+					eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik z dekompresowany.");
 					
 					newReceiveFileList.add(decompressedFileName);
 				} catch (IOException ex) {				
 					logger.error("StackTrace: ", ex);
-					eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "ERROR " + ex.getMessage()));
+					eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "ERROR " + ex.getMessage());
 					reportService.addMessage(report, "-> Błąd: Nie powiodła się operacja dekompresji pliku: " + fileName);
 				} finally {
 					try {
@@ -78,14 +77,14 @@ public class GzipServiceImpl implements GzipService {
 					}
 					File file = new File(workingDirectory + File.separator + fileName);					
 					logger.info("Kasuje plik: " + fileName + "...");
-					eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Kasuje plik: " + fileName + "..."));
+					eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Kasuje plik: " + fileName + "...");
 					
 					if (file.delete()) {						
 						logger.info("Plik skasowany.");
-						eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik skasowany."));
+						eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.INFO.getDesc() + "Plik skasowany.");
 					} else {						
 						logger.error("Błąd: Nie można skasować pliku: " + fileName);
-						eventService.createEvent(new Event(fileExchangeStatus, MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "Błąd: Nie można skasować pliku: " + fileName));
+						eventService.createEvent(fileExchangeStatus, MTTools.getLogDate() + LogStatus.ERROR.getDesc() + "Błąd: Nie można skasować pliku: " + fileName);
 					}
 				}
 			} else {
