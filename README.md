@@ -8,6 +8,7 @@ Spring version of Files Exchange Service
 
 * Move into your projects directory: `cd ~/YOUR_PROJECTS_DIRECTORY`
 * Edit file src/main/resources/application.properties
+	* Set port_number in server.port
     * Set password in server.ssl.key-store-password
     * Set datasource in spring.datasource.url
     * Set username in spring.datasource.username
